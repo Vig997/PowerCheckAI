@@ -7,14 +7,13 @@ import { starterProjects } from "./data/starterProjects";
 import { DashboardPage } from "./pages/DashboardPage";
 import { LandingPage } from "./pages/LandingPage";
 import { ProjectBuilderPage } from "./pages/ProjectBuilderPage";
-import type { AnalysisResult, ComponentItem, ExampleProject, Page, PowerSource, ProjectConfig } from "./types";
-import { defaultProject, loadCurrentProject, loadTheme, requestDurableStorage, saveCurrentProject, saveTheme } from "./utils/storage";
+import type { ComponentItem, ExampleProject, Page, PowerSource, ProjectConfig } from "./types";
+import { loadCurrentProject, loadTheme, requestDurableStorage, saveCurrentProject, saveTheme } from "./utils/storage";
 
 function App() {
   const [page, setPage] = useState<Page>("landing");
   const [theme, setTheme] = useState<"dark" | "light">(() => loadTheme());
   const [project, setProject] = useState<ProjectConfig>(() => loadCurrentProject());
-  const [analysis, setAnalysis] = useState<AnalysisResult | null>(null);
   const [components, setComponents] = useState<ComponentItem[]>([]);
   const [powerSources, setPowerSources] = useState<PowerSource[]>([]);
   const [templates, setTemplates] = useState<ExampleProject[]>([]);
@@ -74,27 +73,6 @@ function App() {
 
   function updateProject(next: ProjectConfig) {
     setProject(next);
-  }
-
-  function loadExample(template: ExampleProject) {
-    const powerSource = powerSources.find((source) => source.name === template.power_source);
-    setProject({
-      ...defaultProject(),
-      project_name: template.name,
-      project_description: template.full_description ?? template.description,
-      project_origin: "starter",
-      selected_microcontroller_id: template.components[0]?.component_id ?? null,
-      selected_components: template.components.slice(1).map((item) => ({
-        component_id: item.component_id,
-        quantity: item.quantity,
-        powered_from: "same_supply",
-        rail_voltage: null,
-      })),
-      selected_power_source_id: powerSource?.id ?? null,
-      updated_at: new Date().toISOString(),
-    });
-    setAnalysis(null);
-    setPage("builder");
   }
 
   function openDashboard(section: "my-projects" | "example-projects") {
@@ -193,22 +171,18 @@ function App() {
               project={project}
               components={components}
               templates={templates}
-              analysis={analysis}
               onProjectChange={updateProject}
               onReturnToDashboard={() => openDashboard("my-projects")}
             />
           ) : null}
           {page === "dashboard" ? (
             <DashboardPage
-              analysis={analysis}
               project={project}
               templates={templates}
               powerSources={powerSources}
               focusSection={dashboardSection}
               focusKey={dashboardFocusKey}
               onProjectChange={updateProject}
-              onBackToBuilder={() => setPage("builder")}
-              onLoadExample={loadExample}
             />
           ) : null}
         </>

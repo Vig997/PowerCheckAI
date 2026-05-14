@@ -36,19 +36,6 @@ export interface PowerSource {
   beginner_tip: string | null;
 }
 
-export interface Regulator {
-  id: number;
-  name: string;
-  regulator_type: "linear" | "buck" | "boost" | string;
-  input_voltage_min: number | null;
-  input_voltage_max: number | null;
-  output_voltage_options: number[];
-  max_current_mA: number;
-  efficiency: number | null;
-  notes: string | null;
-  beginner_tip: string | null;
-}
-
 export interface ExampleProject {
   id: number;
   name: string;
@@ -88,65 +75,6 @@ export interface ProjectConfig {
   regulator_id: number | null;
   settings: ProjectSettings;
   updated_at: string;
-}
-
-export interface WarningItem {
-  code: string;
-  severity: "critical" | "warning" | "suggestion" | string;
-  component: string | null;
-  issue: string;
-  why_it_matters: string;
-  likely_symptoms: string[];
-  recommended_fix: string | null;
-}
-
-export interface TopFix {
-  code: string;
-  fix: string;
-  difficulty: "Easy" | "Medium" | "Advanced" | string;
-  cost: "$" | "$$" | "$$$" | string;
-}
-
-export interface AnalysisResult {
-  current: {
-    typical_total_mA: number;
-    peak_total_mA: number;
-    recommended_current_mA: number;
-    current_margin_mA: number;
-    current_margin_percent: number;
-    line_items: Array<{
-      name: string;
-      quantity: number;
-      typical_mA: number;
-      peak_mA: number;
-      powered_from: string;
-    }>;
-  };
-  battery_life: {
-    is_wall_powered: boolean;
-    runtime_hours_typical: number | null;
-    runtime_hours_worst: number | null;
-    message: string | null;
-  };
-  regulator_heat: Record<string, unknown>;
-  warnings: WarningItem[];
-  warning_summary: Record<string, number>;
-  risk: {
-    score: number;
-    label: RiskLabel;
-  };
-  regulated_voltage: number;
-  selected_microcontroller: ComponentItem;
-  selected_components: Array<{
-    component: ComponentItem;
-    quantity: number;
-    powered_from: PoweredFrom;
-    rail_voltage?: number | null;
-  }>;
-  power_source: PowerSource;
-  regulator: Regulator | null;
-  explanations: WarningItem[];
-  top_fixes: TopFix[];
 }
 
 export interface AiModuleResult {
@@ -191,20 +119,5 @@ export interface AiProjectAnalysis {
     highest_priority_fix: string;
     beginner_build_advice: string;
     confidence: number;
-  };
-}
-
-export interface ParsedProject {
-  description: string;
-  selected_microcontroller: { component_id: number; name: string; quantity: number } | null;
-  selected_components: Array<{ component_id: number; name: string; quantity: number }>;
-}
-
-export interface ReportResponse {
-  project_name: string;
-  report: string;
-  risk: {
-    score: number;
-    label: RiskLabel;
   };
 }

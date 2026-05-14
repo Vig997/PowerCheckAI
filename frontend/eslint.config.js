@@ -15,8 +15,5 @@ export default [
         sourceType: "module",
       },
     },
-    rules: {
-      "@typescript-eslint/no-explicit-any": "off",
-    },
   },
 ];

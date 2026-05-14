@@ -1,27 +1,14 @@
-import { Cpu, FilePlus2, Gauge, Trash2, ShieldCheck, Zap } from "lucide-react";
+import { FilePlus2, Trash2 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
-import { BatteryLifeCard } from "../components/BatteryLifeCard";
-import { BrownoutChart } from "../components/BrownoutChart";
-import { CopyReportButton } from "../components/CopyReportButton";
-import { CurrentChart } from "../components/CurrentChart";
-import { FormulaTooltip } from "../components/FormulaTooltip";
-import { PowerSourceComparison } from "../components/PowerSourceComparison";
-import { RecommendationPanel } from "../components/RecommendationPanel";
-import { RegulatorHeatCard } from "../components/RegulatorHeatCard";
-import { RiskBadge } from "../components/RiskBadge";
-import { SummaryCard } from "../components/SummaryCard";
-import { WarningList } from "../components/WarningList";
-import type { AnalysisResult, ExampleProject, PowerSource, ProjectConfig } from "../types";
-import { formatCurrent } from "../utils/format";
+import type { ExampleProject, PowerSource, ProjectConfig } from "../types";
 import { defaultProject, deleteRecentProject, loadRecentProjects, saveRecentProject } from "../utils/storage";
 
 const PROJECT_TITLE_LIMIT = 42;
 const PROJECT_DESCRIPTION_LIMIT = 150;
 
 export function DashboardPage({
-  analysis,
   project,
   templates,
   powerSources,
@@ -29,15 +16,12 @@ export function DashboardPage({
   focusKey,
   onProjectChange,
 }: {
-  analysis: AnalysisResult | null;
   project: ProjectConfig;
   templates: ExampleProject[];
   powerSources: PowerSource[];
   focusSection: "my-projects" | "example-projects" | null;
   focusKey: number;
   onProjectChange: (project: ProjectConfig) => void;
-  onBackToBuilder: () => void;
-  onLoadExample: (template: ExampleProject) => void;
 }) {
   const [savedProjects, setSavedProjects] = useState<ProjectConfig[]>(() => loadRecentProjects());
   const [deletingProjectNames, setDeletingProjectNames] = useState<string[]>([]);
@@ -300,94 +284,9 @@ export function DashboardPage({
     </>
   );
 
-  const current = analysis?.current;
-  const beginner = project.settings.beginner_mode;
-  const likelySymptoms = analysis ? Array.from(new Set(analysis.warnings.flatMap((warning) => warning.likely_symptoms))).slice(0, 6) : [];
-  const whyThisMatters =
-    analysis?.warnings[0]?.why_it_matters ??
-    "Power systems fail when voltage, current, and heat margins are not sized for realistic peak loads.";
-
   return (
     <main className="animate-page mx-auto max-w-7xl space-y-6 px-6 py-8">
       {projectHub}
-      {analysis && current ? (
-      <>
-      <section className="panel p-5">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-          <div>
-            <p className="label">Analysis Dashboard</p>
-            <h1 className="mt-2 text-3xl font-black text-slate-950 dark:text-white">{project.project_name}</h1>
-            <p className="mt-2 text-sm text-slate-900">
-              {analysis.selected_microcontroller.name} powered by {analysis.power_source.name}
-            </p>
-          </div>
-          <div className="flex flex-wrap gap-3">
-            <RiskBadge label={analysis.risk.label} score={analysis.risk.score} />
-            <CopyReportButton project={project} />
-          </div>
-        </div>
-      </section>
-
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        <SummaryCard title="Typical Current" icon={<Gauge className="h-5 w-5" />} value={formatCurrent(current.typical_total_mA)} detail="Normal expected draw." />
-        <SummaryCard title="Peak Current" icon={<Zap className="h-5 w-5" />} value={formatCurrent(current.peak_total_mA)} detail="Includes startup and stall spikes." />
-        <SummaryCard title="Recommended Supply" icon={<ShieldCheck className="h-5 w-5" />} value={formatCurrent(current.recommended_current_mA)} detail="Peak current plus 20% margin." />
-        <SummaryCard title="Supply Margin" icon={<Cpu className="h-5 w-5" />} value={formatCurrent(current.current_margin_mA)} detail={`${Math.round(current.current_margin_percent * 100)}% margin`} />
-        <BatteryLifeCard analysis={analysis} />
-        <RegulatorHeatCard analysis={analysis} />
-        <SummaryCard title="GPIO Safety" value={analysis.warnings.some((warning) => warning.code === "gpio_overload") ? "Check wiring" : "No overload"} detail="GPIO pins should signal, not power high-current loads." />
-        <SummaryCard title="Voltage Compatibility" value={analysis.warnings.some((warning) => warning.code.includes("voltage") || warning.code.includes("logic")) ? "Warnings found" : "Looks compatible"} detail={`Regulated rail: ${analysis.regulated_voltage}V`} />
-      </div>
-
-      <div className="grid gap-6 xl:grid-cols-[1fr_380px]">
-        <div className="space-y-6">
-          <CurrentChart analysis={analysis} />
-          <BrownoutChart analysis={analysis} />
-          {!beginner ? (
-            <section className="panel p-5">
-              <p className="label">Advanced Formulas</p>
-              <div className="mt-3 grid gap-3 text-sm text-slate-950 dark:text-slate-300 md:grid-cols-2">
-                <FormulaTooltip label="Battery life">Battery life = capacity / current</FormulaTooltip>
-                <FormulaTooltip label="Regulator heat">Regulator heat = (Vin - Vout) * I</FormulaTooltip>
-                <FormulaTooltip label="Recommended current">Recommended current = peak current * 1.2</FormulaTooltip>
-                <FormulaTooltip label="Voltage sag">Voltage sag = current * internal resistance</FormulaTooltip>
-              </div>
-            </section>
-          ) : null}
-          <PowerSourceComparison analysis={analysis} powerSources={powerSources} />
-        </div>
-        <aside className="space-y-6">
-          <RecommendationPanel fixes={analysis.top_fixes} />
-          <WarningList warnings={analysis.warnings} />
-          <section className="panel p-5">
-            <p className="label">Likely Symptoms</p>
-            <div className="mt-3 flex flex-wrap gap-2">
-              {(likelySymptoms.length ? likelySymptoms : ["stable behavior expected"]).map((symptom) => (
-                <span key={symptom} className="rounded-full bg-slate-100 px-3 py-1 text-sm font-semibold text-slate-950 dark:bg-slate-900 dark:text-slate-200">
-                  {symptom}
-                </span>
-              ))}
-            </div>
-          </section>
-          <section className="panel p-5">
-            <p className="label">Why this matters</p>
-            <p className="mt-2 text-sm leading-6 text-slate-900 dark:text-slate-300">{whyThisMatters}</p>
-          </section>
-          <section className="panel p-5">
-            <p className="label">Safe build checklist</p>
-            <ul className="mt-3 space-y-2 text-sm text-slate-900 dark:text-slate-300">
-              <li>Power supply has enough current.</li>
-              <li>Motors and servos are externally powered.</li>
-              <li>Grounds are connected together.</li>
-              <li>GPIO pins only send signals.</li>
-              <li>Voltage levels are compatible.</li>
-              <li>Regulator heat is acceptable.</li>
-            </ul>
-          </section>
-        </aside>
-      </div>
-      </>
-      ) : null}
     </main>
   );
 }

@@ -17,8 +17,7 @@ import { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 
 import { api } from "../api/client";
-import type { AiModuleResult, AiProjectAnalysis, AnalysisResult, ComponentItem, ExampleProject, ProjectConfig } from "../types";
-import { formatCurrent } from "../utils/format";
+import type { AiModuleResult, AiProjectAnalysis, ComponentItem, ExampleProject, ProjectConfig } from "../types";
 import { defaultProject, deleteRecentProject, loadRecentProjects, saveRecentProject } from "../utils/storage";
 
 const PROJECT_TITLE_LIMIT = 42;
@@ -55,14 +54,12 @@ export function ProjectBuilderPage({
   project,
   components,
   templates,
-  analysis,
   onProjectChange,
   onReturnToDashboard,
 }: {
   project: ProjectConfig;
   components: ComponentItem[];
   templates: ExampleProject[];
-  analysis: AnalysisResult | null;
   onProjectChange: (project: ProjectConfig) => void;
   onReturnToDashboard: () => void;
 }) {
@@ -97,7 +94,7 @@ export function ProjectBuilderPage({
   const moduleAverageScore = aiAnalysis?.modules?.length
     ? Math.round(aiAnalysis.modules.reduce((total, module) => total + module.score, 0) / aiAnalysis.modules.length)
     : null;
-  const safetyScore = moduleAverageScore ?? riskToSafetyScore(analysis?.risk.score);
+  const safetyScore = moduleAverageScore;
 
   useEffect(() => {
     setDescriptionDraft(builderDescription);
@@ -132,7 +129,6 @@ export function ProjectBuilderPage({
   const insights = aiAnalysis?.modules?.length
     ? buildAiFeatureInsights(aiAnalysis.modules)
     : buildFeatureInsights({
-        analysis,
         boardName: selectedParts.board?.name,
         componentNames: selectedParts.parts.map(({ component, item }) => `${component.name} x${item.quantity}`),
         description: builderDescription,
@@ -424,10 +420,6 @@ function scoreTone(score: number | null): string {
   return "border-red-300 bg-red-100 text-red-900 dark:border-red-300/40 dark:bg-red-400/15 dark:text-red-100";
 }
 
-function riskToSafetyScore(score?: number | null): number | null {
-  return typeof score === "number" ? Math.max(0, Math.min(100, 100 - score)) : null;
-}
-
 function FeatureBox({ insight, onExpand }: { insight: FeatureInsight; onExpand: () => void }) {
   const Icon = insight.icon;
   return (
@@ -491,26 +483,19 @@ function iconForModule(title: string): LucideIcon {
 }
 
 function buildFeatureInsights({
-  analysis,
   boardName,
   componentNames,
   description,
   ready,
 }: {
-  analysis: AnalysisResult | null;
   boardName?: string;
   componentNames: string[];
   description: string;
   ready: boolean;
 }): FeatureInsight[] {
-  const status: FeatureInsight["status"] = ready ? "Updated" : "Needs Details";
+  const status: FeatureInsight["status"] = "Needs Details";
   const componentSummary = componentNames.length ? componentNames.slice(0, 3).join(", ") : "project loads and sensors";
   const projectContext = description || `Board: ${boardName ?? "not selected"}; Parts: ${componentSummary}.`;
-  const typical = analysis ? formatCurrent(analysis.current.typical_total_mA) : "estimated after analysis";
-  const peak = analysis ? formatCurrent(analysis.current.peak_total_mA) : "estimated from project details";
-  const battery = analysis?.battery_life.message ?? (analysis?.battery_life.runtime_hours_typical ? `${analysis.battery_life.runtime_hours_typical.toFixed(1)} hr typical` : "runtime estimate pending");
-  const heat = typeof analysis?.regulator_heat.classification === "string" ? analysis.regulator_heat.classification : "thermal estimate pending";
-  const brownout = analysis?.warnings.some((warning) => warning.code.includes("brownout")) ? "brownout warning detected" : "brownout risk estimated from startup load";
 
   if (!ready) {
     return featureShells.map(([title, icon]) => ({
@@ -534,141 +519,24 @@ function buildFeatureInsights({
     }));
   }
 
-  return [
-    {
-      title: "Real-Time Current Profiling",
-      icon: Gauge,
-      status,
-      score: riskToSafetyScore(analysis?.risk.score),
-      detail: `Typical draw is ${typical}; peak draw is ${peak}. Context: ${projectContext}`,
-      recommendation: "Track normal and peak loads",
-      expandedDetail: detailedAnalysis("Real-Time Current Profiling", projectContext, [
-        `Typical current estimate: ${typical}.`,
-        `Peak current estimate: ${peak}.`,
-        "This module separates normal operating current from short high-current events. That matters because many beginner electronics projects look safe at average current but fail when motors start, servos stall, LEDs turn full white, or WiFi radios transmit.",
-        "Use the typical current number for runtime planning and thermal expectations. Use the peak current number for choosing the supply, regulator, wiring, and connector ratings.",
-        "A safe design should keep the power supply comfortably above peak current. PowerCheck normally expects a margin above the peak, because cheap USB supplies, breadboard rails, and jumper wires can sag under sudden load.",
-      ]),
-    },
-    {
-      title: "Brownout Prediction Engine",
-      icon: Zap,
-      status,
-      score: riskToSafetyScore(analysis?.risk.score),
-      detail: `${brownout}. Watch for resets during motors, WiFi bursts, servos, or LED startup spikes.`,
-      recommendation: "Check voltage sag margin",
-      expandedDetail: detailedAnalysis("Brownout Prediction Engine", projectContext, [
-        `${brownout}.`,
-        "Brownout happens when the supply voltage dips below what the microcontroller needs to run reliably. The project may not look like it is losing power completely; instead the board may reset, freeze, disconnect from WiFi, flicker LEDs, or behave randomly.",
-        "The most common causes are motor startup current, servo stall current, LED strip current spikes, pump/solenoid activation, weak batteries, long thin wires, and regulators that cannot respond quickly enough.",
-        "For Arduino-style 5V systems, voltage sag near the 5V rail can cause resets or unstable sensor readings. For ESP32 and ESP32-CAM systems, WiFi and camera bursts are especially sensitive because the 3.3V rail needs strong transient current.",
-        "A safer build uses a supply with more peak current headroom, separate high-current rails for motors/servos/LEDs, common ground between rails, and bulk capacitance near noisy loads.",
-      ]),
-    },
-    {
-      title: "GPIO Protection Analysis",
-      icon: ShieldCheck,
-      status,
-      score: riskToSafetyScore(analysis?.risk.score),
-      detail: `GPIO should only signal loads. High-current or inductive devices in ${componentSummary} need driver hardware.`,
-      recommendation: "Avoid powering loads from pins",
-      expandedDetail: detailedAnalysis("GPIO Protection Analysis", projectContext, [
-        "GPIO pins are signal pins, not power supplies. They are meant to output logic levels or read inputs, usually at only a few milliamps.",
-        `In this project, pay special attention to ${componentSummary}. Motors, servos, relays, pumps, solenoids, buzzers, fans, and LED strips should not be powered directly from GPIO.`,
-        "If a load needs more current than a GPIO pin can safely provide, the pin can overheat, latch up, permanently fail, or make the whole board unstable.",
-        "Inductive loads are extra risky because motors, relays, pumps, and solenoids can kick voltage backward when switched off. That back EMF can damage pins unless a driver, flyback diode, MOSFET module, or motor driver handles it.",
-        "The safer pattern is: GPIO sends a small control signal, a driver handles load current, the load has its own suitable power rail, and all grounds are connected together.",
-      ]),
-    },
-    {
-      title: "Battery Discharge Modeling",
-      icon: BatteryCharging,
-      status,
-      score: riskToSafetyScore(analysis?.risk.score),
-      detail: `Battery/runtime model: ${battery}. Larger peak current lowers practical runtime.`,
-      recommendation: "Size for worst-case current",
-      expandedDetail: detailedAnalysis("Battery Discharge Modeling", projectContext, [
-        `Runtime estimate: ${battery}.`,
-        "Battery life is not just capacity divided by average current. Real batteries sag under load, lose usable capacity at high current, and may shut down early if protection circuits trip.",
-        "Small rectangular 9V batteries are especially poor for motors, servos, LED strips, pumps, and wireless boards. AA packs, LiPo packs, or wall adapters are usually better for beginner robotics and lighting projects.",
-        "For runtime, use typical current to estimate normal operation. For reliability, use peak current to check whether the battery can actually supply bursts without voltage collapse.",
-        "If the project uses a buck or boost converter, remember that converter efficiency changes battery current. A boost converter stepping 3.7V up to 5V can draw much more input current than the 5V output current suggests.",
-      ]),
-    },
-    {
-      title: "Thermal Regulator Analysis",
-      icon: Thermometer,
-      status,
-      score: riskToSafetyScore(analysis?.risk.score),
-      detail: `Regulator heat status: ${heat}. Linear regulators need extra attention when voltage drop and current are high.`,
-      recommendation: "Prefer buck converters for heat",
-      expandedDetail: detailedAnalysis("Thermal Regulator Analysis", projectContext, [
-        `Thermal status: ${heat}.`,
-        "Linear regulators turn extra voltage into heat. A 12V source feeding a 5V rail at high current can create a lot of heat because the regulator must burn off the 7V difference.",
-        "The core estimate is heat in watts = (input voltage - output voltage) x output current. Even one watt can make a small regulator very warm without a heatsink or airflow.",
-        "Buck converters are usually better when the input voltage is much higher than the output voltage, or when the project includes motors, servos, pumps, displays, or LED strips.",
-        "If the regulator gets too hot, symptoms include voltage droop, random resets, flickering LEDs, unreliable sensors, or the regulator shutting down thermally.",
-      ]),
-    },
-    {
-      title: "Component Compatibility Engine",
-      icon: CircuitBoard,
-      status,
-      score: riskToSafetyScore(analysis?.risk.score),
-      detail: `Checks voltage, logic-level, current, and driver compatibility for ${componentSummary}.`,
-      recommendation: "Verify voltage and signal levels",
-      expandedDetail: detailedAnalysis("Component Compatibility Engine", projectContext, [
-        `Compatibility focus: ${componentSummary}.`,
-        "Compatibility means more than whether a connector fits. PowerCheck looks at voltage range, current draw, logic level, whether a driver is needed, whether the load is inductive, and whether GPIO can safely control it.",
-        "Common compatibility mistakes include connecting 5V sensor outputs to ESP32 GPIO, powering 5V-only devices from a weak 3.7V LiPo without a boost converter, skipping motor drivers, and assuming an Arduino 5V pin can power servos or motors.",
-        "For each module, verify supply voltage first, then signal voltage, then current, then startup/stall behavior. If any one of those is wrong, the project may still power on but behave unreliably or damage hardware.",
-        "A safer design uses level shifting where needed, drivers for loads, regulators sized for current, and external supplies for high-current components.",
-      ]),
-    },
-    {
-      title: "Power Tree Visualization",
-      icon: GitBranch,
-      status,
-      score: riskToSafetyScore(analysis?.risk.score),
-      detail: `Power should flow from source to regulator/rails, then to controller and loads with shared ground.`,
-      recommendation: "Build a clear power tree",
-      expandedDetail: detailedAnalysis("Power Tree Visualization", projectContext, [
-        "A power tree is the map of how power moves through the project. It starts at the battery, USB supply, or wall adapter and branches through switches, regulators, rails, and loads.",
-        "For this project, draw the source first, then any buck/boost/linear regulators, then each rail. Put the microcontroller and sensors on the logic rail, and put high-current loads on their own rail when needed.",
-        "Mark current direction, voltage level, and ground connections. This quickly reveals if a part is on the wrong voltage, if a regulator is carrying too much current, or if a motor load is being routed through a fragile board pin.",
-        "A good power tree also makes troubleshooting easier: if LEDs flicker, motors slow, or the board resets, you can inspect the affected rail instead of guessing across the whole project.",
-      ]),
-    },
-    {
-      title: "Startup Surge Analysis",
-      icon: Zap,
-      status,
-      score: riskToSafetyScore(analysis?.risk.score),
-      detail: `Startup surge should be sized above the steady current because motors, servos, pumps, and LEDs can spike briefly.`,
-      recommendation: "Reserve peak-current headroom",
-      expandedDetail: detailedAnalysis("Startup Surge Analysis", projectContext, [
-        "Startup surge is the brief high-current demand that happens when a load first turns on or changes state. It can be much larger than normal running current.",
-        "DC motors can draw near stall current at startup. Servos can spike when moving or resisting force. Pumps and solenoids can jump quickly when energized. LED strips can surge when many pixels turn on at high brightness.",
-        "These spikes can cause brownouts even when the average current looks safe. That is why the power supply should be sized from peak current plus margin, not only typical current.",
-        "Mitigation options include a stronger supply, separate high-current rail, bulk capacitors near loads, lower LED brightness, ramping motor speed with PWM, and avoiding simultaneous startup of many loads.",
-      ]),
-    },
-  ];
-}
-
-function detailedAnalysis(title: string, projectContext: string, points: string[]): string {
-  return expandedModuleAnalysis({
-    detected: projectContext,
-    meaning: `${title} is using your project details to check one important power-safety question.`,
-    risks: points.slice(0, 2),
-    fixes: [
-      "Check every component datasheet or product listing for voltage range and current draw.",
-      "Confirm the power supply can handle peak current, not only average current.",
-      "Keep GPIO pins for signal control and use driver hardware for loads.",
-      "Use common ground between the controller and any external power rail.",
-    ],
-    missing: ["exact part specs if not listed"],
-  });
+  return featureShells.map(([title, icon]) => ({
+    title,
+    icon,
+    status,
+    score: null,
+    detail: `Ready to analyze ${componentSummary}. Press Submit Description to calculate this module from the project text.`,
+    recommendation: "Submit description",
+    expandedDetail: expandedModuleAnalysis({
+      detected: projectContext,
+      meaning: `${title} will be filled from the backend analysis after you submit the project description.`,
+      risks: [
+        "These values are intentionally not guessed before analysis runs.",
+        "Submit the description so PowerCheck can extract parts, check current, and generate project-specific advice.",
+      ],
+      fixes: ["Press Submit Description after listing the project goal, parts, and power source."],
+      missing: ["backend analysis result"],
+    }),
+  }));
 }
 
 function expandedModuleAnalysis({
