@@ -2,6 +2,8 @@
 
 PowerCheck AI is a full-stack web app that helps students check the power safety of Arduino, ESP32, robotics, IoT, and beginner electronics projects before they build them.
 
+<img width="941" height="472" alt="powercheck ai frnt page" src="https://github.com/user-attachments/assets/bd04c5c2-5729-446e-ae45-1cc4008b0f1a" />
+
 The idea is simple: a lot of maker projects fail because the power supply is too weak, a motor pulls too much current, a GPIO pin is used incorrectly, or a regulator gets too hot. PowerCheck AI helps catch those problems early in a way that is understandable for high school and college students.
 
 PowerCheck AI is not a professional certification tool. It gives educational estimates and warnings. Always double-check important designs with datasheets, measurements, and safe wiring practices.
@@ -21,6 +23,8 @@ PowerCheck AI is meant to answer questions like:
 
 ## Main Features
 
+<img width="940" height="465" alt="image" src="https://github.com/user-attachments/assets/dae9f09d-4e3b-477d-8047-aa1ec51c6c2c" />
+
 - Local project saving with no login required
 - Starter projects for common Arduino and ESP32 builds
 - Builder page where users describe their project and parts list
@@ -33,6 +37,8 @@ PowerCheck AI is meant to answer questions like:
 - Dark mode and responsive UI
 
 ## PowerCheck Modules
+
+<img width="935" height="458" alt="image" src="https://github.com/user-attachments/assets/45caf22f-f661-44dd-93f1-fcbe42662a7a" />
 
 The Builder analyzes projects using 8 focused modules:
 
@@ -109,8 +115,6 @@ This project also demonstrates full-stack software engineering:
 - Windows-friendly setup scripts
 
 ## AI / ML / NLP System
-
-PowerCheck AI does not use OpenAI, ChatGPT, or any paid API key.
 
 The analysis system is local and explainable:
 
@@ -243,34 +247,4 @@ The frontend check verifies:
 - TypeScript compilation
 - production build
 - Vite configuration
-
-## Screenshots
-
-Screenshots to add before publishing:
-
-- Landing page
-- Dashboard
-- Builder
-- Expanded module analysis
-- Dark mode
-
-## Resume Bullet
-
-Built PowerCheck AI, a full-stack electronics power validation platform for Arduino and ESP32 projects that estimates current draw, battery life, regulator heat, brownout risk, GPIO safety, and voltage compatibility using rule-based EE analysis and ML risk scoring.
-
-## Limitations
-
-- The app gives estimates, not certified electrical safety approval.
-- Component values are simplified for beginner projects.
-- Unknown parts still require datasheet checks.
-- The ML model supports risk scoring but does not invent hardware specs.
-- This is not a SPICE simulator, PCB checker, or professional EDA tool.
-
-## Future Improvements
-
-- Add screenshots and a demo video.
-- Add more components to the database.
-- Add a visual power-tree diagram.
-- Add project JSON import/export to the current dashboard flow.
-- Improve mobile polish.
-- Split the frontend bundle if first-load size becomes important.
+  
