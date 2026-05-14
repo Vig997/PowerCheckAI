@@ -1,0 +1,429 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+  scroll-behavior: smooth;
+  --pcb-pattern: url("data:image/svg+xml,%3Csvg width='720' height='420' viewBox='0 0 720 420' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23111013' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round' opacity='0.72'%3E%3Cpath d='M0 44h82q16 0 16 16v34q0 16 16 16h46'/%3E%3Cpath d='M0 78h54q18 0 18 18v64q0 18 18 18h74'/%3E%3Cpath d='M0 112h28q14 0 14 14v98q0 14 14 14h92'/%3E%3Cpath d='M112 0v58q0 14 14 14h36q14 0 14 14v62'/%3E%3Cpath d='M158 0v104'/%3E%3Cpath d='M204 0v50q0 16 16 16h42'/%3E%3Cpath d='M286 0v86q0 14-14 14h-24q-14 0-14 14v62'/%3E%3Cpath d='M720 38H612q-14 0-14 14v34q0 14-14 14h-78'/%3E%3Cpath d='M720 82H594q-18 0-18 18v72q0 18-18 18h-62'/%3E%3Cpath d='M720 132H650q-16 0-16 16v36q0 16-16 16h-44'/%3E%3Cpath d='M548 0v64q0 16-16 16h-42q-16 0-16 16v42'/%3E%3Cpath d='M604 0v120'/%3E%3Cpath d='M658 0v42q0 18-18 18h-40'/%3E%3Cpath d='M0 322h86q18 0 18-18v-42q0-18 18-18h68'/%3E%3Cpath d='M0 368h142q14 0 14-14v-68q0-14 14-14h44'/%3E%3Cpath d='M116 420V316q0-18 18-18h76'/%3E%3Cpath d='M178 420V344q0-16 16-16h56q16 0 16-16v-52'/%3E%3Cpath d='M720 316H614q-16 0-16-16v-42q0-16-16-16h-84'/%3E%3Cpath d='M720 366H654q-18 0-18-18v-78q0-18-18-18h-54'/%3E%3Cpath d='M554 420V320q0-14-14-14h-46q-14 0-14-14v-48'/%3E%3Cpath d='M628 420V308q0-18-18-18h-42'/%3E%3Cpath d='M328 420V308q0-16 16-16h54q16 0 16-16v-74q0-16 16-16h74'/%3E%3Cpath d='M382 420V346q0-16 16-16h68'/%3E%3Cpath d='M340 0v106q0 18 18 18h42q18 0 18 18v52'/%3E%3Cpath d='M386 0v58q0 14 14 14h46'/%3E%3Cpath d='M236 220h98q16 0 16-16v-46q0-16 16-16h48'/%3E%3Cpath d='M282 252h62q18 0 18 18v44'/%3E%3Cpath d='M456 220h-42q-14 0-14 14v42'/%3E%3C/g%3E%3Cg fill='%23eef2f7' stroke='%23111013' stroke-width='1.4' opacity='0.82'%3E%3Ccircle cx='162' cy='110' r='4'/%3E%3Ccircle cx='176' cy='148' r='3'/%3E%3Ccircle cx='286' cy='86' r='4'/%3E%3Ccircle cx='506' cy='100' r='4'/%3E%3Ccircle cx='604' cy='120' r='3'/%3E%3Ccircle cx='148' cy='238' r='4'/%3E%3Ccircle cx='214' cy='272' r='3'/%3E%3Ccircle cx='498' cy='242' r='4'/%3E%3Ccircle cx='564' cy='252' r='3'/%3E%3Ccircle cx='466' cy='330' r='4'/%3E%3Ccircle cx='414' cy='202' r='4'/%3E%3Ccircle cx='236' cy='220' r='3'/%3E%3Ccircle cx='456' cy='220' r='3'/%3E%3Ccircle cx='398' cy='276' r='4'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+.dark {
+  color-scheme: dark;
+  --pcb-pattern: url("data:image/svg+xml,%3Csvg width='720' height='420' viewBox='0 0 720 420' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23f8fafc' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round' opacity='0.42'%3E%3Cpath d='M0 44h82q16 0 16 16v34q0 16 16 16h46'/%3E%3Cpath d='M0 78h54q18 0 18 18v64q0 18 18 18h74'/%3E%3Cpath d='M0 112h28q14 0 14 14v98q0 14 14 14h92'/%3E%3Cpath d='M112 0v58q0 14 14 14h36q14 0 14 14v62'/%3E%3Cpath d='M158 0v104'/%3E%3Cpath d='M204 0v50q0 16 16 16h42'/%3E%3Cpath d='M286 0v86q0 14-14 14h-24q-14 0-14 14v62'/%3E%3Cpath d='M720 38H612q-14 0-14 14v34q0 14-14 14h-78'/%3E%3Cpath d='M720 82H594q-18 0-18 18v72q0 18-18 18h-62'/%3E%3Cpath d='M720 132H650q-16 0-16 16v36q0 16-16 16h-44'/%3E%3Cpath d='M548 0v64q0 16-16 16h-42q-16 0-16 16v42'/%3E%3Cpath d='M604 0v120'/%3E%3Cpath d='M658 0v42q0 18-18 18h-40'/%3E%3Cpath d='M0 322h86q18 0 18-18v-42q0-18 18-18h68'/%3E%3Cpath d='M0 368h142q14 0 14-14v-68q0-14 14-14h44'/%3E%3Cpath d='M116 420V316q0-18 18-18h76'/%3E%3Cpath d='M178 420V344q0-16 16-16h56q16 0 16-16v-52'/%3E%3Cpath d='M720 316H614q-16 0-16-16v-42q0-16-16-16h-84'/%3E%3Cpath d='M720 366H654q-18 0-18-18v-78q0-18-18-18h-54'/%3E%3Cpath d='M554 420V320q0-14-14-14h-46q-14 0-14-14v-48'/%3E%3Cpath d='M628 420V308q0-18-18-18h-42'/%3E%3Cpath d='M328 420V308q0-16 16-16h54q16 0 16-16v-74q0-16 16-16h74'/%3E%3Cpath d='M382 420V346q0-16 16-16h68'/%3E%3Cpath d='M340 0v106q0 18 18 18h42q18 0 18 18v52'/%3E%3Cpath d='M386 0v58q0 14 14 14h46'/%3E%3Cpath d='M236 220h98q16 0 16-16v-46q0-16 16-16h48'/%3E%3Cpath d='M282 252h62q18 0 18 18v44'/%3E%3Cpath d='M456 220h-42q-14 0-14 14v42'/%3E%3C/g%3E%3Cg fill='%23111013' stroke='%23f8fafc' stroke-width='1.4' opacity='0.48'%3E%3Ccircle cx='162' cy='110' r='4'/%3E%3Ccircle cx='176' cy='148' r='3'/%3E%3Ccircle cx='286' cy='86' r='4'/%3E%3Ccircle cx='506' cy='100' r='4'/%3E%3Ccircle cx='604' cy='120' r='3'/%3E%3Ccircle cx='148' cy='238' r='4'/%3E%3Ccircle cx='214' cy='272' r='3'/%3E%3Ccircle cx='498' cy='242' r='4'/%3E%3Ccircle cx='564' cy='252' r='3'/%3E%3Ccircle cx='466' cy='330' r='4'/%3E%3Ccircle cx='414' cy='202' r='4'/%3E%3Ccircle cx='236' cy='220' r='3'/%3E%3Ccircle cx='456' cy='220' r='3'/%3E%3Ccircle cx='398' cy='276' r='4'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background: #eef2f7;
+  font-family:
+    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+}
+
+.dark body {
+  background: #0b1120;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    linear-gradient(rgba(238, 242, 247, 0.56), rgba(238, 242, 247, 0.62)),
+    var(--pcb-pattern),
+    #eef2f7;
+  background-position:
+    center top,
+    center top,
+    center top;
+  background-size:
+    auto,
+    720px 420px,
+    auto;
+}
+
+.dark body::before {
+  background:
+    linear-gradient(rgba(11, 17, 32, 0.34), rgba(11, 17, 32, 0.42)),
+    var(--pcb-pattern),
+    #0b1120;
+  background-position:
+    center top,
+    center top,
+    center top;
+  background-size:
+    auto,
+    720px 420px,
+    auto;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+* {
+  min-width: 0;
+}
+
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+li,
+span,
+button,
+label,
+div {
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+
+input,
+textarea,
+select {
+  max-width: 100%;
+}
+
+@layer components {
+  .panel {
+    @apply rounded-lg border border-slate-200 bg-white/95 shadow-soft transition duration-300 ease-out hover:-translate-y-0.5 hover:shadow-lg dark:border-slate-800 dark:bg-slate-950/95;
+    contain: paint;
+    content-visibility: auto;
+    contain-intrinsic-size: auto 420px;
+    overflow: hidden;
+    overflow-wrap: anywhere;
+  }
+
+  .nav-scroll-mask {
+    position: sticky;
+    isolation: isolate;
+  }
+
+  .nav-scroll-mask::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background:
+      linear-gradient(rgba(238, 242, 247, 0.56), rgba(238, 242, 247, 0.62)),
+      var(--pcb-pattern),
+      #eef2f7;
+    background-position:
+      center top,
+      center top,
+      center top;
+    background-size:
+      auto,
+      720px 420px,
+      auto;
+  }
+
+  .dark .nav-scroll-mask::before {
+    background:
+      linear-gradient(rgba(11, 17, 32, 0.34), rgba(11, 17, 32, 0.42)),
+      var(--pcb-pattern),
+      #0b1120;
+    background-position:
+      center top,
+      center top,
+      center top;
+    background-size:
+      auto,
+      720px 420px,
+      auto;
+  }
+
+  .dark .panel {
+    box-shadow:
+      0 0 0 1px rgba(34, 211, 238, 0.14),
+      0 0 16px rgba(34, 211, 238, 0.12),
+      0 0 32px rgba(34, 211, 238, 0.07),
+      0 10px 26px rgba(0, 0, 0, 0.48);
+  }
+
+  .dark-surface-shadow {
+    box-shadow:
+      0 0 0 1px rgba(34, 211, 238, 0.18),
+      0 0 24px rgba(34, 211, 238, 0.16),
+      0 0 52px rgba(34, 211, 238, 0.1),
+      0 10px 26px rgba(0, 0, 0, 0.48);
+  }
+
+  .button-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-md bg-cyan-400 px-4 py-2 text-sm font-semibold text-slate-950 transition duration-200 ease-out hover:-translate-y-0.5 hover:bg-cyan-300 hover:shadow-lg active:translate-y-0 active:scale-95 dark:bg-cyan-400 dark:text-slate-950 dark:hover:bg-cyan-300;
+    white-space: normal;
+  }
+
+  .button-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-md border border-slate-300 bg-white/95 px-4 py-2 text-sm font-semibold text-slate-950 shadow-sm transition duration-200 ease-out hover:-translate-y-0.5 hover:bg-slate-50 hover:shadow-md active:translate-y-0 active:scale-95 dark:border-slate-700 dark:bg-slate-900/95 dark:text-slate-100 dark:hover:bg-slate-800;
+    white-space: normal;
+  }
+
+  .input {
+    @apply w-full rounded-md border border-slate-300 bg-white/95 px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition focus:border-cyan-500 focus:ring-2 focus:ring-cyan-200 dark:border-slate-700 dark:bg-slate-900/95 dark:text-slate-100 dark:focus:ring-cyan-950;
+  }
+
+  .label {
+    @apply text-xs font-semibold uppercase tracking-normal text-slate-900 dark:text-slate-400;
+  }
+
+  .interactive-card {
+    @apply transition duration-300 ease-out hover:-translate-y-1 hover:border-cyan-400 hover:shadow-xl active:translate-y-0 active:scale-[0.99];
+  }
+
+  .animate-page {
+    animation: page-in 520ms ease-out both;
+  }
+
+  .animate-fade-up {
+    animation: fade-up 620ms ease-out both;
+  }
+
+  .animate-fade-up-delay {
+    animation: fade-up 720ms ease-out 120ms both;
+  }
+
+  .animate-scale-in {
+    animation: scale-in 620ms ease-out both;
+  }
+
+  .carousel-slide {
+    transition: transform 900ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .project-card-delete {
+    pointer-events: none;
+    animation: project-card-delete 260ms ease-in forwards;
+  }
+
+  .project-card-enter {
+    animation: project-card-enter 420ms ease-out both;
+  }
+
+  .project-card-move-out {
+    pointer-events: none;
+    animation: project-card-move-out 340ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+
+  .create-project-modal {
+    animation: modal-pop 220ms ease-out both;
+  }
+
+  .move-error-message {
+    animation: move-error-fade 2600ms ease-in-out both;
+  }
+
+  .verdict-card-pop {
+    animation: verdict-card-pop 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .modal-backdrop {
+    animation: modal-backdrop-in 220ms ease-out both;
+  }
+
+  .modal-backdrop-out {
+    animation: modal-backdrop-out 220ms ease-in both;
+  }
+
+  .modal-panel {
+    animation: modal-panel-in 260ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .modal-panel-out {
+    animation: modal-panel-out 220ms ease-in both;
+  }
+
+  .project-card-glow {
+    contain: paint;
+    content-visibility: auto;
+    contain-intrinsic-size: auto 220px;
+    overflow: hidden;
+    overflow-wrap: anywhere;
+    box-shadow:
+      0 10px 22px rgba(15, 23, 42, 0.1),
+      0 0 12px rgba(34, 211, 238, 0.1);
+  }
+
+  .dark .project-card-glow {
+    box-shadow:
+      0 0 0 1px rgba(34, 211, 238, 0.14),
+      0 0 14px rgba(34, 211, 238, 0.1),
+      0 0 28px rgba(34, 211, 238, 0.06),
+      0 8px 20px rgba(0, 0, 0, 0.42);
+  }
+
+}
+
+@keyframes page-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes project-card-delete {
+  to {
+    opacity: 0;
+    transform: translateY(8px) scale(0.96);
+    filter: blur(2px);
+  }
+}
+
+@keyframes project-card-enter {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.96);
+    filter: blur(2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+@keyframes project-card-move-out {
+  to {
+    opacity: 0;
+    transform: translateX(18px) translateY(-6px) scale(0.97);
+    filter: blur(1px);
+  }
+}
+
+@keyframes modal-pop {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes modal-backdrop-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes modal-backdrop-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes modal-panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.96);
+    filter: blur(2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+@keyframes modal-panel-out {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(12px) scale(0.97);
+    filter: blur(2px);
+  }
+}
+
+@keyframes move-error-fade {
+  0% {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  12%,
+  78% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes verdict-card-pop {
+  0% {
+    opacity: 0;
+    transform: translateY(10px) scale(0.96);
+    box-shadow: 0 0 0 rgba(34, 211, 238, 0);
+  }
+  55% {
+    opacity: 1;
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 0 24px rgba(34, 211, 238, 0.28);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    box-shadow: 0 0 10px rgba(34, 211, 238, 0.12);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}

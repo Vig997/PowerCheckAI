@@ -1,0 +1,32 @@
+# Dependencies and local environments
+frontend/node_modules/
+backend/.venv/
+.venv/
+
+# Build outputs
+frontend/dist/
+frontend/vite.config.js
+frontend/vite.config.d.ts
+*.tsbuildinfo
+*.log
+
+# Python caches and test output
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Local data/runtime files
+*.db
+*.sqlite
+*.sqlite3
+*.joblib
+*.pkl
+
+# Local secrets/config
+.env
+.env.*
+!.env.example
+
+# Editor and OS noise
+.DS_Store
+Thumbs.db

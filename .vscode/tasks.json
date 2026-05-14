@@ -1,0 +1,83 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Install Backend",
+      "type": "shell",
+      "command": "cmd.exe",
+      "args": ["/d", "/c", "\"${workspaceFolder}\\install_backend.bat\""],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Install Frontend",
+      "type": "shell",
+      "command": "cmd.exe",
+      "args": ["/d", "/c", "\"${workspaceFolder}\\install_frontend.bat\""],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Run Backend",
+      "type": "shell",
+      "command": "cmd.exe",
+      "args": ["/d", "/c", "\"${workspaceFolder}\\run_backend.bat\""],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "isBackground": true,
+      "problemMatcher": {
+        "owner": "powercheck-backend",
+        "pattern": {
+          "regexp": "^$"
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "Starting PowerCheck AI backend",
+          "endsPattern": "Application startup complete"
+        }
+      }
+    },
+    {
+      "label": "Run Frontend",
+      "type": "shell",
+      "command": "cmd.exe",
+      "args": ["/d", "/c", "\"${workspaceFolder}\\run_frontend.bat\""],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "isBackground": true,
+      "problemMatcher": {
+        "owner": "powercheck-frontend",
+        "pattern": {
+          "regexp": "^$"
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "Starting PowerCheck AI frontend",
+          "endsPattern": "Local:"
+        }
+      }
+    },
+    {
+      "label": "Run Full Stack",
+      "dependsOn": ["Run Backend", "Run Frontend"],
+      "dependsOrder": "parallel",
+      "problemMatcher": []
+    },
+    {
+      "label": "Run Tests",
+      "type": "shell",
+      "command": "cmd.exe",
+      "args": ["/d", "/c", "\"${workspaceFolder}\\run_tests.bat\""],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    }
+  ]
+}
