@@ -133,7 +133,7 @@ export function deleteRecentProject(projectName: string): void {
 }
 
 export function loadTheme(): "dark" | "light" {
-  return readStorage(THEME_KEY) === "dark" ? "dark" : "light";
+  return readStorage(THEME_KEY) === "light" ? "light" : "dark";
 }
 
 export function saveTheme(theme: "dark" | "light"): void {
