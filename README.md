@@ -2,6 +2,8 @@
 
 PowerCheck AI is a full-stack web app that helps students check the power safety of Arduino, ESP32, robotics, IoT, and beginner electronics projects before they build them.
 
+https://power-check-ai.vercel.app/
+
 <img width="941" height="472" alt="powercheck ai frnt page" src="https://github.com/user-attachments/assets/bd04c5c2-5729-446e-ae45-1cc4008b0f1a" />
 
 The idea is simple: a lot of maker projects fail because the power supply is too weak, a motor pulls too much current, a GPIO pin is used incorrectly, or a regulator gets too hot. PowerCheck AI helps catch those problems early in a way that is understandable for high school and college students.
