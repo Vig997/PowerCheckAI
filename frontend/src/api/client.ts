@@ -4,7 +4,7 @@ import type {
   PowerSource,
 } from "../types";
 
-const API_BASE_URL = "/api";
+const API_BASE_URL = "/_/backend";
 
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   let response: Response;
