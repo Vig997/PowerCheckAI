@@ -1,7 +1,7 @@
 @echo off
 rem PowerCheck AI - one-command full-stack runner
 rem Run this from VS Code's integrated terminal with: .\runfs
-rem The backend starts in the same terminal session using start /b, then the frontend runs in the foreground.
+rem Opens the backend in a separate Command Prompt, then runs the frontend in this terminal.
 
 set "ROOT=%~dp0"
 set "BACKEND=%ROOT%backend"
@@ -31,7 +31,8 @@ if not exist "%FRONTEND%\node_modules" (
 )
 
 echo Starting PowerCheck AI backend at http://127.0.0.1:8000
-start "PowerCheck Backend" /b cmd /d /c "cd /d ""%BACKEND%"" && ""%PYTHON%"" -m uvicorn app.main:app --reload --host 127.0.0.1 --port 8000"
+start "PowerCheck Backend" "%ROOT%run_backend.bat"
+timeout /t 2 /nobreak >nul
 
 echo Starting PowerCheck AI frontend at http://127.0.0.1:5173
 cd /d "%FRONTEND%"

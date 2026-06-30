@@ -39,14 +39,14 @@ export function LandingPage({
   }
 
   const features: Array<[string, LucideIcon]> = [
-    ["Real-Time Current Profiling", Gauge],
-    ["Brownout Prediction Engine", Zap],
-    ["GPIO Protection Analysis", ShieldCheck],
-    ["Battery Discharge Modeling", BatteryCharging],
-    ["Thermal Regulator Analysis", Thermometer],
-    ["Component Compatibility Engine", Cpu],
-    ["Power Tree Visualization", BatteryCharging],
-    ["Startup Surge Analysis", Thermometer],
+    ["Current Draw Check", Gauge],
+    ["Board Reset Risk", Zap],
+    ["GPIO Pin Safety", ShieldCheck],
+    ["Battery Life Estimate", BatteryCharging],
+    ["Regulator Heat Check", Thermometer],
+    ["Parts Compatibility Check", Cpu],
+    ["Power Path Map", BatteryCharging],
+    ["Startup Spike Check", Thermometer],
   ];
 
   return (

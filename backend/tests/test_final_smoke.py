@@ -65,3 +65,6 @@ def test_ai_description_analysis_handles_vague_and_specific_projects() -> None:
     assert len(specific_data["modules"]) == 8
     assert specific_data["matched_components"]
     assert specific_data["final_recommendation"]["verdict"]
+    module_text = " ".join(f"{module['summary']} {module['details']}" for module in specific_data["modules"])
+    assert "Bluetooth RC Car" in module_text
+    assert "Bluetooth-controlled car" in module_text

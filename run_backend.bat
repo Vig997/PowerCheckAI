@@ -1,7 +1,7 @@
 @echo off
 rem PowerCheck AI - Backend runner
 rem This script works from any folder because %~dp0 points to the project root.
-rem It avoids PowerShell execution-policy issues by using activate.bat and python.exe directly.
+rem It avoids PowerShell execution-policy issues by using python.exe directly.
 
 set "ROOT=%~dp0"
 set "BACKEND=%ROOT%backend"
@@ -25,6 +25,5 @@ if errorlevel 1 (
   exit /b 1
 )
 
-call "%VENV%\Scripts\activate.bat"
 echo Starting PowerCheck AI backend at http://127.0.0.1:8000
 "%PYTHON%" -m uvicorn app.main:app --reload --host 127.0.0.1 --port 8000

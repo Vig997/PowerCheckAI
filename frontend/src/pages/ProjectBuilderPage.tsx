@@ -571,12 +571,12 @@ function expandedModuleAnalysis({
 }
 
 const featureShells: Array<[string, LucideIcon]> = [
-  ["Real-Time Current Profiling", Gauge],
-  ["Brownout Prediction Engine", Zap],
-  ["GPIO Protection Analysis", ShieldCheck],
-  ["Battery Discharge Modeling", BatteryCharging],
-  ["Thermal Regulator Analysis", Thermometer],
-  ["Component Compatibility Engine", CircuitBoard],
-  ["Power Tree Visualization", GitBranch],
-  ["Startup Surge Analysis", Zap],
+  ["Current Draw Check", Gauge],
+  ["Board Reset Risk", Zap],
+  ["GPIO Pin Safety", ShieldCheck],
+  ["Battery Life Estimate", BatteryCharging],
+  ["Regulator Heat Check", Thermometer],
+  ["Parts Compatibility Check", CircuitBoard],
+  ["Power Path Map", GitBranch],
+  ["Startup Spike Check", Zap],
 ];

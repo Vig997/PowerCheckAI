@@ -35,9 +35,9 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
 async function safeResponseText(response: Response): Promise<string> {
   try {
     const text = await response.text();
-    return text || "No error details returned.";
+    return text || "The frontend reached /api, but the backend did not return details. Make sure FastAPI is running at http://127.0.0.1:8000.";
   } catch {
-    return "No error details returned.";
+    return "The frontend reached /api, but the backend did not return details. Make sure FastAPI is running at http://127.0.0.1:8000.";
   }
 }
 
