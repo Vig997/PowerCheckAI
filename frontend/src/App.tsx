@@ -8,19 +8,28 @@ import { DashboardPage } from "./pages/DashboardPage";
 import { LandingPage } from "./pages/LandingPage";
 import { ProjectBuilderPage } from "./pages/ProjectBuilderPage";
 import type { ComponentItem, ExampleProject, Page, PowerSource, ProjectConfig } from "./types";
-import { loadCurrentProject, loadTheme, requestDurableStorage, saveCurrentProject, saveTheme } from "./utils/storage";
+import {
+  loadCatalogCache,
+  loadCurrentProject,
+  loadTheme,
+  requestDurableStorage,
+  saveCatalogCache,
+  saveCurrentProject,
+  saveTheme,
+} from "./utils/storage";
 
 function App() {
+  const [catalogCache] = useState(() => loadCatalogCache());
   const [page, setPage] = useState<Page>("landing");
   const [theme, setTheme] = useState<"dark" | "light">(() => loadTheme());
   const [project, setProject] = useState<ProjectConfig>(() => loadCurrentProject());
-  const [components, setComponents] = useState<ComponentItem[]>([]);
-  const [powerSources, setPowerSources] = useState<PowerSource[]>([]);
-  const [templates, setTemplates] = useState<ExampleProject[]>([]);
+  const [components, setComponents] = useState<ComponentItem[]>(() => catalogCache.components ?? []);
+  const [powerSources, setPowerSources] = useState<PowerSource[]>(() => catalogCache.powerSources ?? []);
+  const [templates] = useState<ExampleProject[]>(starterProjects);
   const [dashboardSection, setDashboardSection] = useState<"my-projects" | "example-projects" | null>(null);
   const [dashboardFocusKey, setDashboardFocusKey] = useState(0);
   const [landingKey, setLandingKey] = useState(0);
-  const [loading, setLoading] = useState(true);
+  const [catalogLoading, setCatalogLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -39,22 +48,27 @@ function App() {
   useEffect(() => {
     let alive = true;
     async function loadData() {
-      try {
-        setLoading(true);
-        const [componentData, sourceData] = await Promise.all([
-          api.components(),
-          api.powerSources(),
-        ]);
-        if (!alive) return;
-        setComponents(componentData);
-        setPowerSources(sourceData);
-        setTemplates(starterProjects);
-      } catch (caught) {
-        if (!alive) return;
-        setError(caught instanceof Error ? caught.message : "Could not reach the PowerCheck backend.");
-      } finally {
-        if (alive) setLoading(false);
+      setCatalogLoading(true);
+      const [componentResult, sourceResult] = await Promise.allSettled([
+        api.components(),
+        api.powerSources(),
+      ]);
+      if (!alive) return;
+
+      if (componentResult.status === "fulfilled") {
+        setComponents(componentResult.value);
       }
+      if (sourceResult.status === "fulfilled") {
+        setPowerSources(sourceResult.value);
+      }
+      if (componentResult.status === "fulfilled" && sourceResult.status === "fulfilled") {
+        saveCatalogCache(componentResult.value, sourceResult.value);
+        setError(null);
+      } else {
+        const failed = componentResult.status === "rejected" ? componentResult.reason : sourceResult.status === "rejected" ? sourceResult.reason : null;
+        setError(failed instanceof Error ? failed.message : "PowerCheck could not refresh the component catalog.");
+      }
+      setCatalogLoading(false);
     }
     loadData();
     return () => {
@@ -143,50 +157,48 @@ function App() {
         </div>
       ) : null}
 
-      {loading ? (
-        <main className="animate-page flex min-h-[60vh] items-center justify-center">
-          <div className="flex items-center gap-3 rounded-lg bg-white p-5 shadow-soft dark:bg-slate-900">
-            <Loader2 className="h-5 w-5 animate-spin text-cyan-600" />
-            Loading PowerCheck catalog...
+      {catalogLoading && page !== "landing" && !components.length ? (
+        <div className="mx-auto mt-4 max-w-7xl px-6">
+          <div className="flex items-center gap-3 rounded-lg border border-cyan-200 bg-cyan-50/90 p-3 text-sm font-semibold text-slate-950 shadow-sm dark:border-cyan-400/30 dark:bg-cyan-400/10 dark:text-cyan-100">
+            <Loader2 className="h-4 w-4 animate-spin text-cyan-600 dark:text-cyan-300" />
+            Loading component catalog in the background...
           </div>
-        </main>
-      ) : (
-        <>
-          {page === "landing" ? (
-            <LandingPage
-              key={landingKey}
-              templates={templates}
-              onNavigate={(nextPage) => {
-                if (nextPage === "builder") {
-                  openDashboard("my-projects");
-                  return;
-                }
-                setPage(nextPage);
-              }}
-              onTryExample={() => openDashboard("example-projects")}
-            />
-          ) : null}
-          {page === "builder" ? (
-            <ProjectBuilderPage
-              project={project}
-              components={components}
-              templates={templates}
-              onProjectChange={updateProject}
-              onReturnToDashboard={() => openDashboard("my-projects")}
-            />
-          ) : null}
-          {page === "dashboard" ? (
-            <DashboardPage
-              project={project}
-              templates={templates}
-              powerSources={powerSources}
-              focusSection={dashboardSection}
-              focusKey={dashboardFocusKey}
-              onProjectChange={updateProject}
-            />
-          ) : null}
-        </>
-      )}
+        </div>
+      ) : null}
+
+      {page === "landing" ? (
+        <LandingPage
+          key={landingKey}
+          templates={templates}
+          onNavigate={(nextPage) => {
+            if (nextPage === "builder") {
+              openDashboard("my-projects");
+              return;
+            }
+            setPage(nextPage);
+          }}
+          onTryExample={() => openDashboard("example-projects")}
+        />
+      ) : null}
+      {page === "builder" ? (
+        <ProjectBuilderPage
+          project={project}
+          components={components}
+          templates={templates}
+          onProjectChange={updateProject}
+          onReturnToDashboard={() => openDashboard("my-projects")}
+        />
+      ) : null}
+      {page === "dashboard" ? (
+        <DashboardPage
+          project={project}
+          templates={templates}
+          powerSources={powerSources}
+          focusSection={dashboardSection}
+          focusKey={dashboardFocusKey}
+          onProjectChange={updateProject}
+        />
+      ) : null}
       <footer className="px-6 py-6 text-center text-xs font-semibold text-slate-900 dark:text-slate-400">
         2026 | Vignesh Balaji
       </footer>

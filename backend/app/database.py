@@ -6,7 +6,12 @@ from sqlalchemy.orm import DeclarativeBase, sessionmaker
 
 BASE_DIR = Path(__file__).resolve().parents[1]
 
-DATABASE_PATH = Path(os.getenv("DATABASE_PATH", "/tmp/powercheck.db"))
+if os.getenv("DATABASE_PATH"):
+    DATABASE_PATH = Path(os.environ["DATABASE_PATH"])
+elif os.name == "nt":
+    DATABASE_PATH = BASE_DIR / "powercheck.db"
+else:
+    DATABASE_PATH = Path("/tmp/powercheck.db")
 DATABASE_URL = f"sqlite:///{DATABASE_PATH}"
 
 class Base(DeclarativeBase):
@@ -31,4 +36,5 @@ def get_db():
 def init_db() -> None:
     from app import models  # noqa: F401
 
+    DATABASE_PATH.parent.mkdir(parents=True, exist_ok=True)
     Base.metadata.create_all(bind=engine)

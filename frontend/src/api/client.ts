@@ -4,7 +4,7 @@ import type {
   PowerSource,
 } from "../types";
 
-const API_BASE_URL = "/_/backend";
+const API_BASE_URL = import.meta.env.DEV ? "/api" : "/_/backend";
 
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   let response: Response;
@@ -25,9 +25,13 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
     throw new Error(`${response.status} ${response.statusText}: ${detail}`);
   }
 
+  const text = await response.text();
   try {
-    return response.json() as Promise<T>;
+    return JSON.parse(text) as T;
   } catch {
+    if (text.trim().startsWith("<!doctype") || text.trim().startsWith("<html")) {
+      throw new Error(`PowerCheck reached ${API_BASE_URL}, but received the frontend HTML page instead of backend JSON. Restart the frontend dev server after config changes and make sure FastAPI is running.`);
+    }
     throw new Error("The backend returned an invalid response.");
   }
 }
@@ -35,9 +39,9 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
 async function safeResponseText(response: Response): Promise<string> {
   try {
     const text = await response.text();
-    return text || "The frontend reached /api, but the backend did not return details. Make sure FastAPI is running at http://127.0.0.1:8000.";
+    return text || `The frontend reached ${API_BASE_URL}, but the backend did not return details. Make sure FastAPI is running at http://127.0.0.1:8000.`;
   } catch {
-    return "The frontend reached /api, but the backend did not return details. Make sure FastAPI is running at http://127.0.0.1:8000.";
+    return `The frontend reached ${API_BASE_URL}, but the backend did not return details. Make sure FastAPI is running at http://127.0.0.1:8000.`;
   }
 }
 

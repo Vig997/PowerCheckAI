@@ -1,9 +1,16 @@
-import type { ProjectConfig } from "../types";
+import type { ComponentItem, PowerSource, ProjectConfig } from "../types";
 
 const CURRENT_PROJECT_KEY = "powercheck.currentProject";
 const PROJECT_LIBRARY_KEY = "powercheck.projectLibrary";
 const RECENT_PROJECTS_KEY = "powercheck.recentProjects";
 const THEME_KEY = "powercheck.theme";
+const CATALOG_CACHE_KEY = "powercheck.catalogCache";
+
+type CatalogCache = {
+  components: ComponentItem[];
+  powerSources: PowerSource[];
+  saved_at: string;
+};
 
 function readStorage(key: string): string | null {
   try {
@@ -138,6 +145,35 @@ export function loadTheme(): "dark" | "light" {
 
 export function saveTheme(theme: "dark" | "light"): void {
   writeStorage(THEME_KEY, theme);
+}
+
+export function loadCatalogCache(): Partial<CatalogCache> {
+  const raw = readStorage(CATALOG_CACHE_KEY);
+  if (!raw) {
+    return {};
+  }
+
+  try {
+    const parsed = JSON.parse(raw) as Partial<CatalogCache>;
+    return {
+      components: Array.isArray(parsed.components) ? parsed.components : [],
+      powerSources: Array.isArray(parsed.powerSources) ? parsed.powerSources : [],
+      saved_at: parsed.saved_at,
+    };
+  } catch {
+    return {};
+  }
+}
+
+export function saveCatalogCache(components: ComponentItem[], powerSources: PowerSource[]): void {
+  writeStorage(
+    CATALOG_CACHE_KEY,
+    JSON.stringify({
+      components,
+      powerSources,
+      saved_at: new Date().toISOString(),
+    }),
+  );
 }
 
 export async function requestDurableStorage(): Promise<boolean> {

@@ -59,8 +59,8 @@ export function LandingPage({
               Design and Validate Your Arduino-Based Power Systems Before You Build
             </p>
             <p className="mt-4 max-w-2xl text-slate-900 dark:text-slate-300">
-              Analyze Your Arduino-Based Projects with a Breakdown on Current Draw, Battery Life, Regulator Heat, GPIO
-              Safety, Voltage Compatibility, Brownout Risk, and More
+              Analyze Your Arduino-Based Projects with Current Draw Check, Board Reset Risk, GPIO Pin Safety, Battery
+              Life Estimate, Regulator Heat Check, Parts Compatibility Check, Power Path Map, and Startup Spike Check
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <button type="button" className="button-primary bg-cyan-400 text-slate-950 hover:bg-cyan-300" onClick={() => onNavigate("builder")}>
