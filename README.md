@@ -44,14 +44,14 @@ PowerCheck AI is meant to answer questions like:
 
 The Builder analyzes projects using 8 focused modules:
 
-1. Real-Time Current Profiling
-2. Brownout Prediction Engine
-3. GPIO Protection Analysis
-4. Battery Discharge Modeling
-5. Thermal Regulator Analysis
-6. Component Compatibility Engine
-7. Power Tree Visualization
-8. Startup Surge Analysis
+1. Current Draw Check
+2. Board Reset Risk
+3. GPIO Pin Safety
+4. Battery Life Estimate
+5. Regulator Heat Check
+6. Parts Compatibility Check
+7. Power Path Map
+8. Startup Spike Check
 
 Each module explains:
 
